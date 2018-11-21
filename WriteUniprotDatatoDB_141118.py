@@ -15,7 +15,7 @@ import time
 import math
 from mysql.connector import connection, errorcode, MySQLConnection, Error
 from python_mysql_db_config import read_db_config, connect
-from mySqlInsertEG import insert_cols
+#from mySqlInsertEG import insert_cols
 
 from xml.etree import ElementTree as ET
 
@@ -23,22 +23,22 @@ import re
 import proTargetMakeTables as mkTb
 import proteinTarTables as tabls
 import json
-import uniProtToDBFunctions as f
+import uniProtToDBFunctions2 as f
 
 """ Open pickled Uniprot data =============================================="""
 
 uniPrtId, proteinName,geneName_up,status_up,existence_up,\
     subCelLoc_up,keyword_up,drgBnkID_up,prositeID_up,reactomeID_up,\
     invlDis_up,trnMem_up,GO_up,length_up,dateCreate_up,dateMod,dateSeqMod,pubMedId_up,\
-    trnsMemEv_Up,cellTrnsMem_up,secreted_up = f.unPickleUniProt('uniProtDat071118.dat')
+    trnsMemEv_Up,cellTrnsMem_up,secreted_up = f.unPickleUniProt('uniProtRawDat19_11_2018.dat')
     
 """ Open fasta sequences ==================================================="""
 
-fo = open('proteinSeqs14_11_2018.dat', 'rb')
+fo = open('proteinSeqs19_11_2018.dat', 'rb')
 proSeqs = pickle.load(fo)
 fo.close()
 
-fo = open('ProteinNms14_11_2018.dat', 'rb')
+fo = open('ProteinNms19_11_2018.dat', 'rb')
 proNms = pickle.load(fo)
 fo.close()
 
@@ -54,7 +54,7 @@ with open('geneNmENSEBL_Dict.dat', 'rb') as fff:
 
 """ Connect to database ===================================================="""
 
-cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','FourLegsWordRate', 'ADC_141118') # connect to DB
+cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_211118') # connect to DB
 
 """ Write data to DB tables ================================================"""
 
