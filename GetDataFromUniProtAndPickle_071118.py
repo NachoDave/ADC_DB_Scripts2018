@@ -144,7 +144,7 @@ for dx in rows[1:-1]:
     
 
     
-""" TTickbox of transmembrane and located on cell membrane -----------------"""    
+""" Tickbox of transmembrane and located on cell membrane -----------------"""    
 trnsMemEv_Up = [0]*rowN
 cellTrnsMem_up = [0]*rowN
 secreted_up = [0]*rowN
@@ -220,7 +220,7 @@ uniPrtEnsId = []#[None]*len(uniPrtId) # store uniprt ID relating to the ensembl 
 
 # seem to be able to get about 1000 ids at a time, a lot quicker than
 ## getting them individually
-n = 500
+n = 1000
 
 for dx in range(0, rowN, n):
     
@@ -238,7 +238,7 @@ for dx in range(0, rowN, n):
                'format' : 'tab', \
                'query': ' '.join(uniPrtId[st:ed]), \
     }
-    time.sleep(6)
+    time.sleep(0.5)
     response = requests.get(BASE + TOOL_ENDPOINT, params=payload)
     strp = response.text.strip().split()
     
@@ -250,6 +250,7 @@ for dx in range(0, rowN, n):
     
     for ex in range(2, len(strp), 2):
         
+        
 #        uniPrtEnsId[tCnt] = strp[ex]
 #        ensId[tCnt] = strp[ex + 1]
         uniPrtEnsId.append(strp[ex])
@@ -257,14 +258,12 @@ for dx in range(0, rowN, n):
         tCnt = tCnt + 1
     
     cnt = cnt + 1
-#    if cnt > 1:
-#        break
-#""" Pickle results ========================================================="""
     
-#with open('uniProtDat' + time.strftime("%d_%m_%Y") + '.dat', 'wb') as ff:
-#    pickle.dump(result3, ff)
-#ff.close()    
-#
-#with open('fasta' + time.strftime("%d_%m_%Y") + '.dat', 'wb') as ff:
-#    pickle.dump(result3, ff)
-#ff.close() 
+''' pickle ensembl IDs ====================================================='''
+
+ensUniPrtIds = [ensId, uniPrtEnsId]
+
+
+with open('ensId'+ time.strftime("%d_%m_%Y") +'.dat', 'wb') as ff:
+    pickle.dump(ensUniPrtIds, ff)
+ff.close()

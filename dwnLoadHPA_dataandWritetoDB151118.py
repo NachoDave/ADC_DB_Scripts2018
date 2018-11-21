@@ -13,7 +13,7 @@ import time
 import math
 from mysql.connector import connection, errorcode, MySQLConnection, Error
 from python_mysql_db_config import read_db_config, connect
-from mySqlInsertEG import insert_cols
+#from mySqlInsertEG import insert_cols
 
 from xml.etree import ElementTree as ET
 
@@ -25,7 +25,7 @@ import time
 
 start = time.time()
 ''' Get the ENSEMBL Ids =================================================='''
-with open('ensId.dat', 'rb') as fff:
+with open('ensId21_11_2018.dat', 'rb') as fff:
     ensUniPrtIds2 = pickle.load(fff)
 ensId = ensUniPrtIds2[0][:]
 uniPrtEnsId = ensUniPrtIds2[1][:] 
@@ -67,7 +67,7 @@ stainLocAr = [] # store the stain locations
 
 for dx in ensId:
     enIdCnt = enIdCnt + 1
-    print(dx)
+    #print(dx)
     # Get all information from protein atlas in xml format   
     x = requests.get('http://www.proteinatlas.org/' + dx + '.xml' )
     # Get the relevent fields from the x.text (which is in xml format)
@@ -328,11 +328,12 @@ for dx in ensId:
                     (dx, tisId, antibod_HPA_Id,  maleND_L_M_H[0], maleND_L_M_H[1], maleND_L_M_H[2], maleND_L_M_H[3], femaleND_L_M_H[0], femaleND_L_M_H[1], femaleND_L_M_H[2], femaleND_L_M_H[3]))                    
     
     if not enIdCnt%100:
+        print(dx)
         print('Commiting')
         cnx.commit()
 
 
-    if enIdCnt > 100:
+    if enIdCnt > 1000:
         break
     
 cur.close()
