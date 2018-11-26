@@ -49,7 +49,7 @@ with open('ensId21_11_2018.dat', 'rb') as fff:
 ensId = ensUniPrtIds2[0][:]
 uniPrtEnsId = ensUniPrtIds2[1][:] 
 
-with open('geneNmENSEBL_Dict.dat', 'rb') as fff:
+with open('geneNmENSEBL_Dict26_11_2018.dat', 'rb') as fff:
     disNm = pickle.load(fff)
 
 """ Connect to database ===================================================="""

@@ -291,10 +291,12 @@ for cx in range(0, math.ceil(len(ensIdSetLst)), ensIdN):
     st = cx
     ed = cx + ensIdN
     
-    print('Extracting names: ', st, ' to ', ed )    
+    
     
     if ed > len(ensIdSetLst):
         ed = len(ensIdSetLst)
+        
+    print('Extracting names: ', st, ' to ', ed )    
 
     cnt = 0
     dat = '{"ids" : ['
@@ -322,51 +324,6 @@ for cx in range(0, math.ceil(len(ensIdSetLst)), ensIdN):
 #        disNm[fx] = ensemInfo[ex]['display_name']
         ensIdChk[fx] = ex
 
-
-#server = "http://rest.ensembl.org"
-#ext = "/lookup/id"
-#headers={ "Content-Type" : "application/json", "Accept" : "application/xml"}
-#
-#ensIdN = 1000 # number of 
-#assNm = [None]*len(ensId)
-#disNm = [None]*len(ensId)
-#cntNoNm = 0
-#for cx in range(0, math.ceil(len(ensId)), ensIdN):
-#    
-#    st = cx
-#    ed = cx + ensIdN -1
-#    
-#       
-#    
-#    if ed > len(ensId):
-#        ed = len(ensId) -1
-#        
-#    print('Extracting names: ', st, ' to ', ed ) 
-#
-#    cnt = 0
-#    dat = '{"ids" : ['
-#    for dx in ensId[st:ed]:
-#        cnt = cnt + 1
-#        
-#        if cnt < ensIdN - 1:
-#            dat = dat +'"' + dx +'", '
-#        else:
-#            dat = dat +'"' + dx +'" '
-#    
-#    dat = dat + '] }'
-#
-#    r = requests.post(server+ext, headers=headers, data=dat)
-#    ensemInfo = json.loads(r.text)
-#    
-#    for ex, fx in zip(ensId[st:ed], range(st, ed)):
-#        if ensemInfo[ex]:
-#            assNm[fx] = ensemInfo[ex]['assembly_name']
-#            disNm[fx] = ensemInfo[ex]['display_name']
-#        else:
-#            
-#            assNm[fx] = ''
-#            disNm[fx] = ''
-#            cntNoNm += 1
 #    if cx > 1:
 #        break
 with open('geneNmENSEBL_Dict' + time.strftime("%d_%m_%Y") + '.dat', 'wb') as ff:

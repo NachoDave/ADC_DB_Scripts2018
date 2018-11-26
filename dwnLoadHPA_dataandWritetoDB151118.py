@@ -28,16 +28,12 @@ start = time.time()
 with open('ensId21_11_2018.dat', 'rb') as fff:
     ensUniPrtIds2 = pickle.load(fff)
 ensId = ensUniPrtIds2[0][:]
-uniPrtEnsId = ensUniPrtIds2[1][:] 
-
-''' Collect data from Human protein atlas =================='''
-
-
-hpaTissueName = [None]*len(ensId) # empty list of tissue names
+ensId = list(set(ensId))
+#uniPrtEnsId = ensUniPrtIds2[1][:] 
 
 ''' Connect to database'''
 
-cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_141118') # connect to DB
+cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_211118') # connect to DB
 
 ''' Make HPA tables in DB =================================================='''
 
@@ -58,6 +54,8 @@ for dx in (tabls.TabNmHPAPath): # uses the list of tables specified in proteinTa
     cur.execute(tabls.TABLES_HPA_PATH[dx])
 
 print('Created tables')
+
+''' Collect data from Human protein atlas =================='''
 
 ''' Loop through ENSEMBL Ids and get data from HPA'''
 
@@ -329,7 +327,7 @@ for dx in ensId:
     
     if not enIdCnt%100:
         print(dx)
-        print('Commiting')
+        print('Commiting ' + str(enIdCnt - 100) + ':' + str(enIdCnt))
         cnx.commit()
 
 
