@@ -44,7 +44,7 @@ fo.close()
 
 """ Open pickled ENSEMBL data =============================================="""
 
-with open('ensId.dat', 'rb') as fff:
+with open('ensId21_11_2018.dat', 'rb') as fff:
     ensUniPrtIds2 = pickle.load(fff)
 ensId = ensUniPrtIds2[0][:]
 uniPrtEnsId = ensUniPrtIds2[1][:] 

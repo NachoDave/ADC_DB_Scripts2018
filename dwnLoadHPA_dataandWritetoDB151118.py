@@ -37,7 +37,7 @@ hpaTissueName = [None]*len(ensId) # empty list of tissue names
 
 ''' Connect to database'''
 
-cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','FourLegsWordRate', 'ADC_141118') # connect to DB
+cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_141118') # connect to DB
 
 ''' Make HPA tables in DB =================================================='''
 
@@ -123,7 +123,7 @@ for dx in ensId:
                     cnt2 = cnt2 + 1
                 cnt1 = cnt1 + 1
                 
-#        # get cancer and patient information
+#        # get cancer and patient information (this is moved below in the cancer tissue to db loop)
 #        cancN = len(root.findall('.entry/antibody/tissueExpression[@assayType="pathology"]/data'))
 #        cancerTis = [None]*cancN # array to store cancer names
 #        antibod_HPA_Id = [None]*cancN
