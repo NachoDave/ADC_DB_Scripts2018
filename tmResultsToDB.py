@@ -5,6 +5,8 @@ Created on Wed Oct 24 15:47:24 2018
 @author: dave
 """
 
+import time
+start = time.time()
 ''' TM results to DB ======================================================'''
 
 import readTMResults as TMrs
@@ -12,14 +14,17 @@ import proteinTarTables as tabls
 import proTargetMakeTables as mkTb
 
 '''Routine for parsing topcons data======================================= '''
-pth = '/media/dave/Seagate Backup Plus Drive/Bioinformatics/TransmembraneTools/TopConsResults/FirstAttempt_Protein0to39999_270918/rst_6ea8vY/seq_'
-fn = '/query.result.txt'
+#pth = '/media/dave/Seagate Backup Plus Drive/Bioinformatics/TransmembraneTools/TopConsResults/FirstAttempt_Protein0to39999_270918/rst_6ea8vY/seq_'
+pth = 'E:\\DaveJames\\PredictionTools\\TopConsResults\\FirstAttempt_Protein0to39999_270918\\rst_6ea8vY\\seq_'
+fn = '\\query.result.txt'
 
 #fnum = [1145]
-fnum = [10096, 1145, 10460]
+#fnum = [10096, 1145, 10460]
+#fnum = range(0,39940)
+fnum = range(100, 200)
 
 """ Connect to DB =========================================================="""
-cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','FourLegsWordRate', 'ADC_Targeter') # connect to DB
+cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_211118') # connect to DB
 """ Create TM tables ======================================================="""
 
 for dx in reversed(tabls.sofTabNms):
@@ -39,9 +44,9 @@ for dx in softwares:
 
 
 """ Loop through topcons results (includes Spoctopus, Octopus, philius, scampi, phobius) """
-
+cnt = fnum[0] - 1 # iteration counter
 for fndx in fnum: # loop through Proteins
-    
+    cnt += 1
     pthf = pth + str(fndx)
     f1 = TMrs.topconRes(pthf, fn) # inputs 
 
@@ -73,6 +78,11 @@ for fndx in fnum: # loop through Proteins
         f1.topConON, f1.octON, f1.octON, f1.philON, f1.scampiON, f1.polPhoON, \
         maxOLen, minOLen)) 
     
+        if not cnt%10:
+            print(dx)
+            print('Commiting ' + str(cnt - 100) + ':' + str(cnt))
+            cnx.commit()
+            print('Time elapsed = ' + str(time.time() - start))
 """ Disconnect to DB ======================================================="""    
 cnx.commit()
 cur.close()

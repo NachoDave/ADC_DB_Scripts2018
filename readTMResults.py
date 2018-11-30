@@ -25,7 +25,7 @@ class topconRes:
             
             self.exst = 0
             
-            print('File' +  fn + 'does not exist')
+            print('File ' +  pth + fn + ' does not exist')
     ''' Varaibles =========================================================='''
     
     ''' Gene name '''
@@ -147,7 +147,10 @@ class topconRes:
         self.spoctSDx = self.getSpan(self.predSpoct, 'S*') 
         self.polyPhoSDx = self.getSpan(self.predPolPho, 'S*') 
         self.philSDx = self.getSpan(self.predPhil, 'S*') 
-    
+
+    ''' Close the file ===================================================='''
+    def closeFile(self):
+        self.file.close()    
     
     ''' Run all the functions to parse data and write to files ============='''
     def runAll(self):
@@ -157,10 +160,12 @@ class topconRes:
             self.getTMRegions()
             self.getORegions()
             self.getSigPep()
+            self.closeFile()
         else:
             
             print('Could not find the file, no results')
-        
+    
+
     ''' Private methods ==================================================='''
     
             

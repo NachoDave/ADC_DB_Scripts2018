@@ -10,17 +10,17 @@ import requests # library to access url
 #import map_retrieve2 as mr2
 import pickle
 import time 
-import math
+#import math
 from mysql.connector import connection, errorcode, MySQLConnection, Error
 from python_mysql_db_config import read_db_config, connect
 #from mySqlInsertEG import insert_cols
 
 from xml.etree import ElementTree as ET
 
-import re
+#import re
 import proTargetMakeTables as mkTb
 import proteinTarTables as tabls
-import json
+#import json
 import time
 
 start = time.time()
@@ -331,8 +331,8 @@ for dx in ensId:
         cnx.commit()
 
 
-    if enIdCnt > 1000:
-        break
+#    if enIdCnt > 1000:
+#        break
     
 cur.close()
 cnx.close()    
