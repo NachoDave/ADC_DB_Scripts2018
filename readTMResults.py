@@ -13,19 +13,22 @@ class topconRes:
     ''' Class to read in and parse topcons result file '''    
     
     ''' Constructor '''
-    def __init__(self, pth, fn): # constructor
-        self.fn = fn
-        self.pth = pth
-        
-        if os.path.isfile(pth + fn):         
+    def __init__(self, pth, fn, resDirPre, seqNo, gnNm): # constructor
+        self.resPth = pth + resDirPre + str(seqNo) + fn
+
+        if os.path.isfile(pth + resDirPre + str(seqNo) + fn):         
         
             self.exst = 1
+            #print('File ' +  pth + resDirPre + str(seqNo) + fn + ' DOES exist')
             
         else:
             
             self.exst = 0
             
-            print('File ' +  pth + fn + ' does not exist')
+            print('File ' +  pth + resDirPre + str(seqNo) + fn + ' does not exist')
+     
+        self.gnNm = gnNm
+        self.seqNo = seqNo
     ''' Varaibles =========================================================='''
     
     ''' Gene name '''
@@ -86,10 +89,17 @@ class topconRes:
                  
     ''' Public Methods ====================================================='''
     def readRes(self): # read line text file
-        with open(self.pth + self.fn) as self.file:
+        with open(self.resPth) as self.file:
             self.dat = self.file.readlines()
-        self.gnNm = re.search(r'\|\w+\|', self.dat[6]).group().replace('|', '')
-
+        
+            
+            
+        self.tgnNm = re.search(r'\|\w+\|', self.dat[6])
+        if self.tgnNm:
+            s = self.tgnNm[0]
+            ss = s.replace('|', '')
+            if ss != self.gnNm:
+                print("Gene names don't match finishedSeqNm = " + self.gnNm + " query.results.txt gnNm = " + ss + " fndx = " + str(self.seqNo))
             
     def assignRes(self):# assign results to string varaibles
         self.seq = self.dat[9].rstrip()
@@ -183,6 +193,51 @@ class topconRes:
             cnt = cnt + 1
             
         return l
+            
+"""========================================================================"""   
+class topConFinSeq:
+    
+    ''' Constructor ========================================================'''
+    def __init__(self, pth, fnFinSeq): # constructor
+
+        self.finSeqPth = pth + fnFinSeq
+        
+            
+        if os.path.isfile(pth + fnFinSeq):         
+        
+            self.exstFinSeqs = 1
+            print('Ok')
+            
+        else:
+            
+            self.exstFinSeqs  = 0
+            
+            print('File ' +  pth + fnFinSeq + ' does not exist') 
+            
+    ''' Load file =========================================================='''
+    def loadFile(self):
+        with open(self.finSeqPth) as self.file:
+            self.dat = self.file.readlines()
+            
+    ''' Close the file ====================================================='''
+    def closeFile(self):
+        self.file.close()
+            
+    def orderBySeqNm(self):
+        self.orderedSeqs = [None]*len(self.dat) # empty list
+        self.gnNm = [None]*len(self.dat) # empty list
+        for dx in self.dat:
+            seqStr = re.findall(r'seq_\d*', dx)
+            seqStr = seqStr[0]
+            seqN = int(seqStr.replace('seq_', ''))
+            
+            gnNmStr = re.findall(r'\|\w*\|',dx) # get just the sequence name
+            gnNmStr = gnNmStr[0]
+            
+            self.orderedSeqs[seqN] = dx
+            s = gnNmStr.replace('|', '')
+            self.gnNm[seqN] = s 
+        
             
             
         

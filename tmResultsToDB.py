@@ -15,13 +15,15 @@ import proTargetMakeTables as mkTb
 
 '''Routine for parsing topcons data======================================= '''
 #pth = '/media/dave/Seagate Backup Plus Drive/Bioinformatics/TransmembraneTools/TopConsResults/FirstAttempt_Protein0to39999_270918/rst_6ea8vY/seq_'
-pth = 'E:\\DaveJames\\PredictionTools\\TopConsResults\\FirstAttempt_Protein0to39999_270918\\rst_6ea8vY\\seq_'
+pth = 'E:\\DaveJames\\PredictionTools\\TopConsResults\\FirstAttempt_Protein0to39999_270918\\rst_6ea8vY\\'
+resDirPre = 'seq_'
 fn = '\\query.result.txt'
+fnFinSeq = 'finished_seqs.txt'
 
 #fnum = [1145]
 #fnum = [10096, 1145, 10460]
 #fnum = range(0,39940)
-fnum = range(100, 200)
+fnum = range(0, 39941)
 
 """ Connect to DB =========================================================="""
 cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_211118') # connect to DB
@@ -44,11 +46,22 @@ for dx in softwares:
 
 
 """ Loop through topcons results (includes Spoctopus, Octopus, philius, scampi, phobius) """
-cnt = fnum[0] - 1 # iteration counter
+
+''' Get sequence name from finished_seq file =============================='''
+
+seqNms = TMrs.topConFinSeq(pth, fnFinSeq) # creates finished_seq file parsing object
+seqNms.loadFile() # loads file into memory
+seqNms.orderBySeqNm()
+seqNms.closeFile()
+
+seqNo = fnum[0] - 1 # iteration counter
 for fndx in fnum: # loop through Proteins
-    cnt += 1
-    pthf = pth + str(fndx)
-    f1 = TMrs.topconRes(pthf, fn) # inputs 
+    seqNo += 1
+    #pthf = pth + str(fndx)
+
+    gnNm = seqNms.gnNm[int(fndx)] # get the gene name from the seqNms class
+    
+    f1 = TMrs.topconRes(pth, fn, resDirPre,  fndx, gnNm) # inputs path prefix, file name and sequence number 
 
     f1.runAll()
     """ Write to DB =========================================================== """
@@ -65,24 +78,26 @@ for fndx in fnum: # loop through Proteins
         minOLen = min(f1.topConOLens + f1.octOLens + f1.spoctOLens + f1.philOLens \
         + f1.polPhoOLens + f1.scampiOLens) # get shortest predicted extracellular region   
         
-        cur.execute("SELECT Id FROM UniProt_Proteins WHERE Accession LIKE %s", (f1.gnNm, ))  
-        upId = cur.fetchone()[0] # get the uniprot Id
-        
-        cur.execute("INSERT IGNORE INTO " + tabls.sofTabNms[tabDx] + "(UniprotId,  "
-        "TopconsTM_N, OctopusTM_N, SpoctopusTM_N, PhiliusTM_N, ScampiTM_N, PolyPhobiusTM_N,"
-        "TopconsO_N, OctopusO_N, SpoctopusO_N, PhiliusO_N, ScampiO_N, PolyPhobiusO_N,"
-        "LongestO, ShortestO ) "
-        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", \
-        (upId, f1.topConTMN, f1.octTMN, \
-        f1.octTMN, f1.philTMN, f1.scampiTMN, f1.polPhoTMN, \
-        f1.topConON, f1.octON, f1.octON, f1.philON, f1.scampiON, f1.polPhoON, \
-        maxOLen, minOLen)) 
+        cur.execute("SELECT Id FROM UniProt_Proteins WHERE Accession LIKE %s", (f1.gnNm, )) 
+        if cur.fetchone():
+            cur.execute("SELECT Id FROM UniProt_Proteins WHERE Accession LIKE %s", (f1.gnNm, )) 
+            upId = cur.fetchone()[0] # get the uniprot Id
+            
+            cur.execute("INSERT IGNORE INTO " + tabls.sofTabNms[tabDx] + "(UniprotId,  "
+            "TopconsTM_N, OctopusTM_N, SpoctopusTM_N, PhiliusTM_N, ScampiTM_N, PolyPhobiusTM_N,"
+            "TopconsO_N, OctopusO_N, SpoctopusO_N, PhiliusO_N, ScampiO_N, PolyPhobiusO_N,"
+            "LongestO, ShortestO ) "
+            "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", \
+            (upId, f1.topConTMN, f1.octTMN, \
+            f1.octTMN, f1.philTMN, f1.scampiTMN, f1.polPhoTMN, \
+            f1.topConON, f1.octON, f1.octON, f1.philON, f1.scampiON, f1.polPhoON, \
+            maxOLen, minOLen)) 
     
-        if not cnt%10:
-            print(dx)
-            print('Commiting ' + str(cnt - 100) + ':' + str(cnt))
-            cnx.commit()
-            print('Time elapsed = ' + str(time.time() - start))
+    if not seqNo%100:
+        print(fndx)
+        print('Commiting ' + str(seqNo - 10) + ':' + str(seqNo))
+        cnx.commit()
+        print('Time elapsed = ' + str(time.time() - start))
 """ Disconnect to DB ======================================================="""    
 cnx.commit()
 cur.close()
