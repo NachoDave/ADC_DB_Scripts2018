@@ -190,7 +190,7 @@ for dx in ensId:
         # Note probably only need to do this the first time round
             tabDx = tabDx + 1
             for ix, jx in zip(tissues, tislevel):
-                cur.execute("INSERT IGNORE INTO "+tabls.TabNmHPA[tabDx]+"(TissueName) VALUES(%s)", (ix,))
+                cur.execute("INSERT IGNORE INTO "+tabls.TabNmHPA[tabDx]+"(TissueName) VALUES(%s)", (ix,)) # add un added tissues to tissue table
                 cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx]+" WHERE TissueName LIKE %s ", (ix, ))
                 tisId = cur.fetchone()[0]
             #print(tisDx)
@@ -324,6 +324,10 @@ for dx in ensId:
                     cur.execute("INSERT INTO " + tabls.TabNmHPAPath[tabDx2 + 2] + \
                     "(ENSEMBL_Gene_Id, CancTissue_Id, Antigen_HPA_Id, LevelNotDetectedM, LevelLowM, LevelMediumM, LevelHighM, LevelNotDetectedF, LevelLowF, LevelMediumF, LevelHighF) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ", \
                     (dx, tisId, antibod_HPA_Id,  maleND_L_M_H[0], maleND_L_M_H[1], maleND_L_M_H[2], maleND_L_M_H[3], femaleND_L_M_H[0], femaleND_L_M_H[1], femaleND_L_M_H[2], femaleND_L_M_H[3]))                    
+    
+    
+    
+    
     
     if not enIdCnt%100:
         print(dx)

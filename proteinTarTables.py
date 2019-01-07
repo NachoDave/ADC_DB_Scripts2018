@@ -89,7 +89,7 @@ TABLES[TabNms[dx]] = (
 #    "")
 
 """ HPA data tables ========================================================"""
-TabNmHPA = ['Tissues_HPA', 'HealthyTissueLevels_HPA', 'CellType_HPA', 'HealthyCellLevels_HPA'] #,Healthy_HPA', 'Cancer_HPA']
+TabNmHPA = ['Tissues_HPA', 'HealthyTissueLevels_HPA', 'CellType_HPA', 'HealthyCellLevels_HPA', 'HealthyTissueLevelsRows_HPA'] #,Healthy_HPA', 'Cancer_HPA']
 
 ex = -1
 TABLES_HPA = {}
@@ -167,6 +167,21 @@ TABLES_HPA[TabNmHPA[ex]] = (
     " ON DELETE CASCADE "
     ") ENGINE = InnoDB"    
 )
+
+'''HealthyTissueLevel_Rows ------------------------------------------------ '''
+ex = ex + 1
+TABLES_HPA[TabNmHPA[ex]] = (
+        "CREATE TABLE IF NOT EXISTS `" + TabNmHPA[ex] + "`("
+        "Id int NOT NULL AUTO_INCREMENT,"
+        "ENSEMBL_Gene_Id char(15) UNIQUE,"
+        "PRIMARY KEY (Id),"
+        " "
+        "FOREIGN KEY (ENSEMBL_Gene_Id) "
+        "REFERENCES ENSEMBL_Genes(Ensembl_Gene_Id)"
+        "ON DELETE CASCADE"
+        " "
+        ") ENGINE = InnoDB"
+        )
 
 
 ''' Cancer tissues HPA ----------------------------------------------------'''
