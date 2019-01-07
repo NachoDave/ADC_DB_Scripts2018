@@ -176,7 +176,7 @@ TABLES_HPA[TabNmHPA[ex]] = (
         "ENSEMBL_Gene_Id char(15) UNIQUE,"
         "PRIMARY KEY (Id),"
         " "
-        "FOREIGN KEY (ENSEMBL_Gene_Id) "
+        "FOREIGN KEY EnGeneFK (ENSEMBL_Gene_Id) "
         "REFERENCES ENSEMBL_Genes(Ensembl_Gene_Id)"
         "ON DELETE CASCADE"
         " "

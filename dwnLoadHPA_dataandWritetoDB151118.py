@@ -32,11 +32,12 @@ ensId = list(set(ensId))
 #uniPrtEnsId = ensUniPrtIds2[1][:] 
 
 ''' Connect to database'''
-
-cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', 'ADC_211118') # connect to DB
+tabSchm = 'ADC_211118' # table schema/name
+cnx, cur = mkTb.dbconnect( '127.0.0.1', 'root','Four4Legs!Word#Rate0', tabSchm) # connect to DB
 
 ''' Make HPA tables in DB =================================================='''
 
+'''
 for dx in reversed(tabls.TabNmHPA):
     print('Deleting ' + dx)
     cur.execute("DROP TABLE IF EXISTS " + dx)    
@@ -54,6 +55,7 @@ for dx in (tabls.TabNmHPAPath): # uses the list of tables specified in proteinTa
     cur.execute(tabls.TABLES_HPA_PATH[dx])
 
 print('Created tables')
+'''
 
 ''' Collect data from Human protein atlas =================='''
 
@@ -189,38 +191,60 @@ for dx in ensId:
             ''' Tissues table and ENSEMBL_Tissue Junction_Table ===================='''
         # Note probably only need to do this the first time round
             tabDx = tabDx + 1
-            for ix, jx in zip(tissues, tislevel):
-                cur.execute("INSERT IGNORE INTO "+tabls.TabNmHPA[tabDx]+"(TissueName) VALUES(%s)", (ix,)) # add un added tissues to tissue table
-                cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx]+" WHERE TissueName LIKE %s ", (ix, ))
-                tisId = cur.fetchone()[0]
+            #!for ix, jx in zip(tissues, tislevel): # comment with exclamation mark (#!) shows lines that need to be uncommented to run full script appending to tables
+                #!cur.execute("INSERT IGNORE INTO "+tabls.TabNmHPA[tabDx]+"(TissueName) VALUES(%s)", (ix,)) # add un added tissues to tissue table
+                #!cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx]+" WHERE TissueName LIKE %s ", (ix, ))
+                #!tisId = cur.fetchone()[0]
             #print(tisDx)
-                cur.execute("INSERT INTO " + tabls.TabNmHPA[tabDx + 1] +"(ENSEMBL_Gene_Id, HealthyTissueLevel, Tissue_Id) VALUES(%s, %s, %s)", (dx, jx, tisId))    
+                #!cur.execute("INSERT INTO " + tabls.TabNmHPA[tabDx + 1] +"(ENSEMBL_Gene_Id, HealthyTissueLevel, Tissue_Id) VALUES(%s, %s, %s)", (dx, jx, tisId))    
         
         
             ''' CellType table -----------------------------------------------------'''
             tabDx = tabDx + 2
             cellTypesDwn = list(set([item for sublist in cellType for item in sublist]))
-            for ix in cellTypesDwn:
-                cur.execute("INSERT IGNORE INTO " + tabls.TabNmHPA[tabDx]+"(CellType) VALUES(%s)", (ix,))
+            #!for ix in cellTypesDwn:
+                #!cur.execute("INSERT IGNORE INTO " + tabls.TabNmHPA[tabDx]+"(CellType) VALUES(%s)", (ix,))
         
         
             ''' ENSEMBL TISSUE CELL junction table ---------------------------------------'''
             tabDx = tabDx + 1 
-            for ix, jx, kx in zip(tissues, cellType, cellLev):  # loops through tissues and the first level of the cell arrays
-                cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx - 3]+" WHERE TissueName LIKE %s ", (ix, ))
-                tisId = cur.fetchone()[0]
+            #!for ix, jx, kx in zip(tissues, cellType, cellLev):  # loops through tissues and the first level of the cell arrays
+                #!cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx - 3]+" WHERE TissueName LIKE %s ", (ix, ))
+                #!tisId = cur.fetchone()[0]
     
-                for celx, clevx in zip(jx, kx):
-                    cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx - 1]+" WHERE CellType LIKE %s ", (celx,))
-                    celTyp = cur.fetchone()[0]
-                    cur.execute("INSERT INTO " + tabls.TabNmHPA[tabDx] + "(ENSEMBL_Gene_Id, Tissue_Id, CellType_Id, HealthyCellLevel) \
-                    VALUES(%s, %s, %s, %s)", (dx, tisId, celTyp, clevx))
+                #!for celx, clevx in zip(jx, kx):
+                    #!cur.execute("SELECT Id FROM "+tabls.TabNmHPA[tabDx - 1]+" WHERE CellType LIKE %s ", (celx,))
+                    #!celTyp = cur.fetchone()[0]
+                    #!cur.execute("INSERT INTO " + tabls.TabNmHPA[tabDx] + "(ENSEMBL_Gene_Id, Tissue_Id, CellType_Id, HealthyCellLevel) \
+                    #!VALUES(%s, %s, %s, %s)", (dx, tisId, celTyp, clevx))
+                    
+            ''' Healthy tissue levels with rows-------------------------------------------'''
+            tabDx = tabDx + 1
+            
+            if tissues:
+                tissues1 = [i.replace(' ', '_').replace(',', '') for i in tissues] 
+                for ix, jx in zip(tissues1, tislevel): # check if the columns corresponding to tissues are present and if not add them
+                    cur.execute("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "+ \
+                                "TABLE_NAME=%s AND COLUMN_NAME= %s", (tabls.TabNmHPA[tabDx], ix)
+                                ) # find in column exists
+                    insertCol = cur.fetchone()[0]
+                    if not insertCol: # add a tissue column if not already present
+                        print("Adding column" + ix)
+                        cur.execute("ALTER TABLE {0} ADD COLUMN `{1}` VARCHAR(20)".format(tabls.TabNmHPA[tabDx], ix)) # add column
+                
+                
+                tisLevAp = [i for i in tislevel]
+                tisNmStr = "ENSEMBL_Gene_Id," + ",".join(tissues1) # crate string of the column names
+                tisLevStr = "'" + dx + "','" + "','".join(tisLevAp) + "'" # create string of the column values to add into table
+                cur.execute("INSERT INTO {0} ({1}) VALUES({2});".format(tabls.TabNmHPA[tabDx], tisNmStr, tisLevStr))
+            
     
+        '''!
         """ HPA data to db, cancer tables ====================================="""
         if root.findall('.entry/antibody/tissueExpression[@assayType="pathology"]/data'): # only do if pathology data
             tabDx2 = -1
             tabDx2 = tabDx2 + 1
-            ''' Cancer tissue and stain level table -----------------------------------------------'''
+            # Cancer tissue and stain level table -----------------------------------------------
         
              # get cancer and patient information
 
@@ -276,7 +300,7 @@ for dx in ensId:
                     
                     #print(ix, tisId)
                     
-                    ''' Stain levels table -----------------------------------------'''
+                    # Stain levels table -----------------------------------------
                     maleND_L_M_H = [0]*4  # count the number of 
                     femaleND_L_M_H = [0]*4
                     
@@ -327,7 +351,7 @@ for dx in ensId:
     
     
     
-    
+    '''#!
     
     if not enIdCnt%100:
         print(dx)
@@ -335,9 +359,9 @@ for dx in ensId:
         cnx.commit()
 
 
-#    if enIdCnt > 1000:
-#        break
-    
+    if enIdCnt > 5:
+        break
+cnx.commit()    
 cur.close()
 cnx.close()    
 end = time.time()
