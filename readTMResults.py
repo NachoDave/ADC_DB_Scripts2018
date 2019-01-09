@@ -60,7 +60,7 @@ class topconRes:
     scampiTMN = None
     spoctTMN = None
     
-    noTMPreds = None
+    noTMPreds = 0
 
     ''' Outside regions '''    
     topConODx = None
