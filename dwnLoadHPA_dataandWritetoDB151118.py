@@ -356,11 +356,13 @@ for dx in ensId:
     if not enIdCnt%100:
         print(dx)
         print('Commiting ' + str(enIdCnt - 100) + ':' + str(enIdCnt))
+        end = time.time()
+        print(end - start)
         cnx.commit()
 
 
-    if enIdCnt > 5:
-        break
+    #if enIdCnt > 15:
+     #   break
 cnx.commit()    
 cur.close()
 cnx.close()    

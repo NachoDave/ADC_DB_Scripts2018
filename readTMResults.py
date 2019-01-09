@@ -126,7 +126,7 @@ class topconRes:
         self.scampiTMN = len(self.scampiTMDx)
         self.spoctTMN = len(self.spoctTMDx) 
         
-        t_tmN = [self.topConTMN, self.topConTMN, self.philTMN, self.polPhoTMN, self.scampiTMN, self.spoctTMN]       
+        t_tmN = [self.topConTMN, self.octTMN, self.philTMN, self.polPhoTMN, self.scampiTMN, self.spoctTMN]       
         
         self.noTMPreds = sum([x for x in t_tmN if x > 0])
 
