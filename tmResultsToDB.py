@@ -90,7 +90,7 @@ for fndx in fnum: # loop through Proteins
             "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", \
             (upId, f1.topConTMN, f1.octTMN, \
             f1.spoctTMN, f1.philTMN, f1.scampiTMN, f1.polPhoTMN, \
-            f1.topConON, f1.octON, f1.octON, f1.philON, f1.scampiON, f1.polPhoON, \
+            f1.topConON, f1.octON, f1.spoctON, f1.philON, f1.scampiON, f1.polPhoON, \
             maxOLen, minOLen)) 
     
     if not seqNo%100:
